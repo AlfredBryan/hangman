@@ -32,12 +32,16 @@ const gameSchema = Schema({
     ref: "Users",
     required: false
   },
+  game_score: {
+    type: Number,
+    default: 10
+  },
   game_life: {
     type: Number,
     default: 20
   }
 });
 
-const Games = mongoose.model("Games", gameSchema)
+const Games = mongoose.model("Games", gameSchema);
 
 module.exports = Games;
