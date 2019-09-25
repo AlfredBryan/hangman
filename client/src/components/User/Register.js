@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
+import Spinner from "../hoc/spinner";
+
 import "./style.css";
 
 class Register extends Component {
@@ -21,7 +23,7 @@ class Register extends Component {
     });
   };
 
-  userLogin = e => {
+  userRegister = e => {
     e.preventDefault();
     const { username, gender, password } = this.state;
     this.setState({
@@ -34,12 +36,24 @@ class Register extends Component {
         password
       })
       .then(res => {
-        console.log(res);
+        if (res.status === 201) {
+          this.setState({
+            loading: false
+          });
+          localStorage.setItem("token", res.data.token);
+          this.props.history.push("/games");
+        }
+      })
+      .catch(error => {
+        this.setState({
+          loading: false
+        });
+        throw error;
       });
   };
 
   render() {
-    const { username, password, gender } = this.state;
+    const { username, password, gender, loading } = this.state;
     console.log(gender);
     return (
       <div className="cover-all">
@@ -56,7 +70,7 @@ class Register extends Component {
               </Link>
             </li>
           </ul>
-          <form className="form-horizontal" onSubmit={this.userLogin}>
+          <form className="form-horizontal" onSubmit={this.userRegister}>
             <div className="form-group">
               <label htmlFor="username">Username</label>
               <input
@@ -94,11 +108,11 @@ class Register extends Component {
             </div>
             <div className="form-group">
               <button
-                className="form-control btn btn-warning"
+                className="form-control login-btn"
                 type="submit"
-                onClick={this.userLogin}
+                onClick={this.userRegister}
               >
-                Submit
+                {loading ? <Spinner /> : "Submit"}
               </button>
             </div>
           </form>

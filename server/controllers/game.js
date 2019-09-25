@@ -18,10 +18,10 @@ class game {
     }).populate("user", "username");
 
     if (games.length < 1) {
-      const err = new Error();
-      err.message = "No games available";
-      err.statusCode = 200;
-      return next(err);
+      res.status(200).send({
+        success: true,
+        message: "No Games Available"
+      });
     }
 
     return res.status(200).json({

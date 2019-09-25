@@ -1,0 +1,26 @@
+.question-form {
+    margin-top: 5em;
+    margin-bottom: 5em;
+    width: 20rem;
+    display: inline-block;
+}
+
+.no_games {
+    padding: 3em;
+    border: 1px solid;
+    box-shadow: 5px 10px;
+}
+
+.card {
+    margin: 0em 2em 1em 0em
+}
+
+.display_games a {
+    text-decoration: none;
+    color: black;
+}
+
+.display_games a:hover {
+    text-decoration: none;
+    color: black;
+}

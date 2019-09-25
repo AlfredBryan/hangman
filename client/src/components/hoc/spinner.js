@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import "./style.css";
 
-class spinner extends Component {
+class Spinner extends Component {
   render() {
     return (
       <div className="wrap">
-        <div className="lds-facebook">
+        <div className="lds-ellipsis">
+          <div></div>
           <div></div>
           <div></div>
           <div></div>
@@ -15,4 +16,4 @@ class spinner extends Component {
   }
 }
 
-export default spinner;
+export default Spinner;
