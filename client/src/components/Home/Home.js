@@ -13,6 +13,7 @@ class Home extends Component {
       games: [],
       question: "",
       description: "",
+      assigned_games: [],
       loading: false
     };
   }
@@ -32,7 +33,6 @@ class Home extends Component {
         }
       })
       .then(res => {
-        console.log(res);
         this.setState({
           games: res.data.games
         });
@@ -66,16 +66,64 @@ class Home extends Component {
               loading: false
             });
           }
+        })
+        .catch(error => {
+          throw error;
         });
     }
   };
 
+  joinGame = id => {
+    const token = localStorage.getItem("token");
+    axios
+      .get(`http://localhost:4000/api/v1/join/${id}`, {
+        headers: {
+          token
+        }
+      })
+      .then(res => {
+        if (res.status === 200) {
+          this.fetchGames();
+          this.assignedGames();
+        }
+      })
+      .catch(error => {
+        if (error) {
+          alert("cannot join your own game");
+        }
+      });
+  };
+
+  assignedGames = () => {
+    const token = localStorage.getItem("token");
+    axios
+      .get("http://localhost:4000/api/v1/assigned", {
+        headers: {
+          token
+        }
+      })
+      .then(res => {
+        if (res.status === 200) {
+          this.setState({
+            assigned_games: res.data.games
+          });
+        }
+      });
+  };
+
   componentDidMount() {
     this.fetchGames();
+    this.assignedGames();
   }
 
   render() {
-    const { question, description, loading, games } = this.state;
+    const {
+      question,
+      description,
+      loading,
+      games,
+      assigned_games
+    } = this.state;
     return (
       <React.Fragment>
         <div className="cover-all">
@@ -123,6 +171,51 @@ class Home extends Component {
             </button>
           </form>
         </div>
+        <div className="text-center assign_games">
+          <h3>Assigned games</h3>
+          {assigned_games.length < 1 ? (
+            <div className="no_games">
+              <h4>No Games Available</h4>
+            </div>
+          ) : (
+            <div className="container-fluid display_games">
+              <div className="row">
+                {assigned_games.map(game => (
+                  <div className="col-md-4 mb-5" key={game._id}>
+                    <div className="card h-100">
+                      <div className="card-body">
+                        <div className="row">
+                          <div className="col-md-6">Assigned Game</div>
+                          <div className="col-md-6 in_progress">
+                            {game.status}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="card-footer row">
+                        <div className="col-md-8">
+                          <h6>Life: {game.game_life}</h6>
+                          <p>
+                            <small>
+                              {moment(game.date_created).format("llll")}
+                            </small>
+                          </p>
+                        </div>
+                        <div className="col-md-4">
+                          <div> Score: {game.game_score}</div>
+                          <Link to={`/play_game/${game._id}`}>
+                            <button className="form-control btn btn-warning">
+                              Play
+                            </button>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
         <div className="text-center">
           <h3>Available games</h3>
           {games.length < 1 ? (
@@ -133,31 +226,39 @@ class Home extends Component {
             <div className="container-fluid display_games">
               <div className="row">
                 {games.map(game => (
-                  <Link className="col-md-4 mb-5" to={`/play_game/${game._id}`}>
-                    <div key={game._id} >
-                      <div className="card h-100">
-                        <div className="card-body">
-                          <div className="row">
-                            <div className="col-md-6">New Game</div>
-                            <div className="col-md-6">{game.status}</div>
-                          </div>
-                        </div>
-                        <div className="card-footer row">
-                          <div className="col-md-8">
-                            <h6>Life: {game.game_life}</h6>
-                            <p>
-                              <small>
-                                {moment(game.date_created).format("llll")}
-                              </small>
-                            </p>
-                          </div>
-                          <div className="col-md-4">
-                            Score: {game.game_score}
+                  <div className="col-md-4 mb-5" key={game._id}>
+                    <div className="card h-100">
+                      <div className="card-body">
+                        <div className="row">
+                          <div className="col-md-6">New Game</div>
+                          <div className="col-md-6 pending-status">
+                            {game.status}
                           </div>
                         </div>
                       </div>
+                      <div className="card-footer row">
+                        <div className="col-md-8">
+                          <h6>Life: {game.game_life}</h6>
+                          <p>
+                            <small>
+                              {moment(game.date_created).format("llll")}
+                            </small>
+                          </p>
+                        </div>
+                        <div className="col-md-4">
+                          <div> Score: {game.game_score}</div>
+                          <button
+                            onClick={() => {
+                              this.joinGame(game._id);
+                            }}
+                            className="form-control btn btn-success"
+                          >
+                            Join
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
             </div>

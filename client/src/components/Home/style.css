@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Italiana&display=swap');
+
 .question-form {
     margin-top: 5em;
     margin-bottom: 5em;
@@ -23,4 +25,18 @@
 .display_games a:hover {
     text-decoration: none;
     color: black;
+}
+
+.assign_games {
+    margin-bottom: 3em;
+}
+
+.pending-status {
+    color: red;
+    font-family: 'Italiana', serif;
+}
+
+.in_progress {
+    color: rgb(207, 13, 175);
+    font-family: 'Italiana', serif;
 }
