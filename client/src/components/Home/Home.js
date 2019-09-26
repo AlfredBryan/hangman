@@ -33,6 +33,7 @@ class Home extends Component {
         }
       })
       .then(res => {
+        console.log(res);
         this.setState({
           games: res.data.games
         });
@@ -185,7 +186,7 @@ class Home extends Component {
                     <div className="card h-100">
                       <div className="card-body">
                         <div className="row">
-                          <div className="col-md-6">Assigned Game</div>
+                          <div className="col-md-6">{game.description}</div>
                           <div className="col-md-6 in_progress">
                             {game.status}
                           </div>
@@ -230,7 +231,7 @@ class Home extends Component {
                     <div className="card h-100">
                       <div className="card-body">
                         <div className="row">
-                          <div className="col-md-6">New Game</div>
+                          <div className="col-md-6">{game.description}</div>
                           <div className="col-md-6 pending-status">
                             {game.status}
                           </div>
