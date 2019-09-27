@@ -3,6 +3,7 @@ import moment from "moment";
 import axios from "axios";
 
 import "./style.css";
+import CustomNav from "../Navbar/CustomNav";
 
 class Game extends Component {
   constructor(props) {
@@ -72,6 +73,7 @@ class Game extends Component {
     const { game, answer, game_response } = this.state;
     return (
       <div>
+        <CustomNav />
         <div className="container">
           <div className="card h-100 single_game">
             <div className="card-body">

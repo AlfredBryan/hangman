@@ -5,6 +5,7 @@ import axios from "axios";
 
 import "./style.css";
 import Spinner from "../hoc/spinner";
+import CustomNav from "../Navbar/CustomNav";
 
 class Home extends Component {
   constructor(props) {
@@ -14,6 +15,7 @@ class Home extends Component {
       question: "",
       description: "",
       assigned_games: [],
+      profile: "",
       loading: false
     };
   }
@@ -33,7 +35,6 @@ class Home extends Component {
         }
       })
       .then(res => {
-        console.log(res);
         this.setState({
           games: res.data.games
         });
@@ -127,6 +128,7 @@ class Home extends Component {
     } = this.state;
     return (
       <React.Fragment>
+        <CustomNav />
         <div className="cover-all">
           <form
             onSubmit={this.postQuestion}

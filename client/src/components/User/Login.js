@@ -34,7 +34,7 @@ class Login extends Component {
             loading: false
           });
           localStorage.setItem("token", res.data.token);
-          this.props.history.push("/games")
+          this.props.history.push("/games");
         }
       })
       .catch(error => {
@@ -47,6 +47,10 @@ class Login extends Component {
 
   render() {
     const { username, password, loading } = this.state;
+    const token = localStorage.getItem("token");
+    if (token) {
+      this.props.history.push("/games");
+    }
     return (
       <div className="cover-all">
         <div className="register-form">

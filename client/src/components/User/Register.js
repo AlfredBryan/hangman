@@ -54,7 +54,10 @@ class Register extends Component {
 
   render() {
     const { username, password, gender, loading } = this.state;
-    console.log(gender);
+    const token = localStorage.getItem("token");
+    if (token) {
+      this.props.history.push("/games");
+    }
     return (
       <div className="cover-all">
         <div className="register-form">

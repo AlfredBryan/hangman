@@ -6,6 +6,9 @@
     width: 20rem;
     display: inline-block;
 }
+.profile_display {
+    margin-top: 5em
+}
 
 .no_games {
     padding: 3em;

@@ -1,0 +1,8 @@
+@import url('https://fonts.googleapis.com/css?family=Cute+Font&display=swap');
+
+.navbar-brand {
+    font-family: 'Cute Font', cursive;
+    font-size: 30px  !important;
+    padding-left: 2em;
+    color: rgb(13, 83, 25) !important;
+}

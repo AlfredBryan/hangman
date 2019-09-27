@@ -26,6 +26,15 @@ router
     userController.login
   );
 
+//User Profile
+router
+  .route("/profile")
+  .get(
+    authenticate.checkTokenExists,
+    authenticate.checTokenValid,
+    userController.getProfile
+  );
+
 //Available games
 router
   .route("/games")
