@@ -68,6 +68,7 @@ class Home extends Component {
             this.setState({
               loading: false
             });
+            alert("Game created")
           }
         })
         .catch(error => {

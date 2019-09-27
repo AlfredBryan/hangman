@@ -61,6 +61,10 @@ class Game extends Component {
             game_response: res.data.message,
             answer: ""
           });
+          if (res.data.message === "You won...") {
+            alert("You Won Game");
+            this.props.history.push("/games");
+          }
         }
       });
   };
