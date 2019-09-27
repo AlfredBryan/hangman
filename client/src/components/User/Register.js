@@ -40,8 +40,7 @@ class Register extends Component {
           this.setState({
             loading: false
           });
-          localStorage.setItem("token", res.data.token);
-          this.props.history.push("/games");
+          this.props.history.push("/login");
         }
       })
       .catch(error => {
