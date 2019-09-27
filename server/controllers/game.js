@@ -210,7 +210,7 @@ class game {
         _id: token.id
       });
 
-      user.total_score += games.game_score;
+      user.total_score + games.game_score;
       games.status = "Won";
 
       await games.save();
@@ -219,7 +219,7 @@ class game {
         {
           _id: token.id
         },
-        { total_score: +games.game_score }
+        { total_score: games.game_score }
       );
       return res.status(200).json({
         message: "You won...",
