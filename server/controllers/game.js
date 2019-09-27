@@ -219,7 +219,7 @@ class game {
         {
           _id: token.id
         },
-        { total_score: games.game_score }
+        { total_score: ++games.game_score }
       );
       return res.status(200).json({
         message: "You won...",
