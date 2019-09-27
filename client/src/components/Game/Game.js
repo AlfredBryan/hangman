@@ -19,7 +19,7 @@ class Game extends Component {
     const token = localStorage.getItem("token");
     const { gameId } = this.state;
     axios
-      .get(`http://localhost:4000/api/v1/assigned/${gameId}`, {
+      .get(`https://word-gues-game.herokuapp.com/api/v1/assigned/${gameId}`, {
         headers: {
           token
         }
@@ -45,7 +45,7 @@ class Game extends Component {
     const token = localStorage.getItem("token");
     axios
       .post(
-        `http://localhost:4000/api/v1/play/${gameId}`,
+        `https://word-gues-game.herokuapp.com/api/v1/play/${gameId}`,
         { answer },
         {
           headers: {

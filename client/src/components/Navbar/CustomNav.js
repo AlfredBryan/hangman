@@ -30,7 +30,7 @@ class CustomNav extends React.Component {
   componentDidMount() {
     const token = localStorage.getItem("token");
     axios
-      .get("http://localhost:4000/api/v1/profile", {
+      .get("https://word-gues-game.herokuapp.com/api/v1/profile", {
         headers: {
           token
         }

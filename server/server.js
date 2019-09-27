@@ -11,7 +11,7 @@ dotenv.config();
 
 const port = process.env.PORT || 4000;
 
-const app = express()
+const app = express();
 
 //Connect to DB
 mongoose
@@ -23,16 +23,6 @@ mongoose
   .then(() => console.log("Connected to DB"))
   .catch(error => console.log("Error" + error));
 
-// Serve static assets if in production
-if (process.env.NODE_ENV === "production") {
-  // Set static folder
-  app.use(express.static("client/build"));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname + "client/build/index.html"));
-  });
-}
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(logger("dev"));
@@ -42,6 +32,16 @@ app.use(cors());
 
 //setting routes
 app.use("/api/v1", router);
+
+// Serve static assets if in production
+if (process.env.NODE_ENV === "production") {
+  // Set static folder
+  app.use(express.static("client/build"));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname + "client/build/index.html"));
+  });
+}
 
 //Start server
 app.listen(port, () => {
