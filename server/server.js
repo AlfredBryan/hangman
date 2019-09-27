@@ -1,4 +1,4 @@
-const app = require("express")();
+const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -10,6 +10,8 @@ const router = require("./routes/router");
 dotenv.config();
 
 const port = process.env.PORT || 4000;
+
+const app = express()
 
 //Connect to DB
 mongoose
