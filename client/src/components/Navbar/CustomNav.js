@@ -8,7 +8,7 @@ import {
   NavItem,
   NavLink
 } from "reactstrap";
-import { Link, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 import "./style.css";
 import axios from "axios";
@@ -30,7 +30,7 @@ class CustomNav extends React.Component {
   componentDidMount() {
     const token = localStorage.getItem("token");
     axios
-      .get("https://word-gues-game.herokuapp.com/api/v1/profile", {
+      .get("/api/v1/profile", {
         headers: {
           token
         }

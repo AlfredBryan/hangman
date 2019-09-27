@@ -29,7 +29,7 @@ class Home extends Component {
   fetchGames = () => {
     const token = localStorage.getItem("token");
     axios
-      .get("https://word-gues-game.herokuapp.com/api/v1/games", {
+      .get("/api/v1/games", {
         headers: {
           token
         }
@@ -54,7 +54,7 @@ class Home extends Component {
       });
       axios
         .post(
-          "https://word-gues-game.herokuapp.com/api/v1/game",
+          "/api/v1/game",
           { description, question },
           {
             headers: {
@@ -79,7 +79,7 @@ class Home extends Component {
   joinGame = id => {
     const token = localStorage.getItem("token");
     axios
-      .get(`https://word-gues-game.herokuapp.com/api/v1/join/${id}`, {
+      .get(`/api/v1/join/${id}`, {
         headers: {
           token
         }
@@ -100,7 +100,7 @@ class Home extends Component {
   assignedGames = () => {
     const token = localStorage.getItem("token");
     axios
-      .get("https://word-gues-game.herokuapp.com/api/v1/assigned", {
+      .get("/api/v1/assigned", {
         headers: {
           token
         }
