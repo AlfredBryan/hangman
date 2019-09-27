@@ -26,7 +26,7 @@ class Login extends Component {
       loading: true
     });
     axios
-      .post("http://localhost:4000/api/v1/login", { username, password })
+      .post("/api/v1/login", { username, password })
       .then(res => {
         console.log(res);
         if (res.status === 200) {

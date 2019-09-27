@@ -30,7 +30,7 @@ class Register extends Component {
       loading: true
     });
     axios
-      .post("http://localhost:4000/api/v1/register", {
+      .post("/api/v1/register", {
         username,
         gender,
         password
