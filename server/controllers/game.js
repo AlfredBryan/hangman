@@ -206,7 +206,7 @@ class game {
     }
 
     if (games.game_life > 0 && games.question === answer) {
-      const user = Users.findOne({
+      const user = await Users.findOne({
         _id: token.id
       });
 
