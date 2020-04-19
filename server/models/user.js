@@ -1,36 +1,53 @@
 const mongoose = require("mongoose");
+const uniqueValidator = require("mongoose-unique-validator");
 
 const Schema = mongoose.Schema;
 
-const userSchema = Schema({
-  username: {
+const userSchema = new Schema({
+  name: {
     type: String,
     required: true,
-    unique: true,
-    maxlength: 30
   },
-  gender: {
+  is_admin: {
+    type: Boolean,
+    default: false,
+  },
+  state: {
     type: String,
-    enum: ["male", "female", "other"],
-    required: true
+    required: true,
+  },
+  address: {
+    type: String,
+    required: false,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: [true, "email already exist"],
+  },
+  phone: {
+    type: String,
+    required: true,
+    unique: [true, "phone number already exist"],
   },
   password: {
     type: String,
     required: true,
-    maxlength: 70
   },
-  reg_date: {
+  cart: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Cart",
+    },
+  ],
+  date_joined: {
     type: Date,
-    required: true,
-    default: Date.now()
+    default: Date.now(),
   },
-  total_score: {
-    type: Number,
-    required: true,
-    default: 0
-  }
 });
 
-const Users = mongoose.model("Users", userSchema);
+userSchema.plugin(uniqueValidator);
 
-module.exports = Users;
+const User = mongoose.model("User", userSchema);
+
+module.exports = User;

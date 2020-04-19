@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 class authenticate {
   /**
@@ -8,17 +9,16 @@ class authenticate {
    * @param {function} next - next middleware function
    * @return {json}
    */
-
   static checkTokenExists(req, res, next) {
     const { token } = req.headers;
 
     if (token === undefined || token === null || token === "") {
-      const err = new Error();
-      err.message = "token does not exist";
-      err.statusCode = 401;
-      return next(err);
+      res
+        .status(422)
+        .send({ authenticated: false, message: "unidentified user" });
+    } else {
+      return next();
     }
-    return next();
   }
 
   /**
@@ -28,17 +28,15 @@ class authenticate {
    * @param {function} next - next middleware function
    * @return {json}
    */
-  static checTokenValid(req, res, next) {
+  static checkTokenValid(req, res, next) {
     const { token } = req.headers;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     if (!decoded) {
-      const err = new Error();
-      err.message = "invalid token";
-      err.statusCode = 401;
-      return next(err);
+      res.status(422).send({ authenticated: false, message: "invalid token" });
+    } else {
+      return next();
     }
-    return next();
   }
 
   /**
@@ -51,12 +49,13 @@ class authenticate {
     const { token } = req.headers;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    if (decoded.level !== "admin") {
-      const err = new Error();
-      (err.message = "not authorized"), (err.statusCode = 401);
-      return next(err);
+    if (decoded.is_admin !== true) {
+      res
+        .status(422)
+        .send({ authenticated: false, message: "you're not admin" });
+    } else {
+      return next();
     }
-    return next();
   }
 }
 

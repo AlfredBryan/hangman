@@ -4,7 +4,9 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const logger = require("morgan");
 const mongoose = require("mongoose");
-const router = require("./routes/router");
+
+const productRoute = require("./routes/productRoutes");
+const userRoute = require("./routes/userRoutes")
 
 dotenv.config();
 
@@ -30,7 +32,8 @@ app.use(logger("dev"));
 app.use(cors());
 
 //setting routes
-app.use("/api/v1", router);
+app.use("/api/v1", userRoute);
+app.use("/api/v1", productRoute)
 
 
 //Start server
