@@ -7,6 +7,8 @@ require("dotenv").config();
 
 const authenticate = require("../middleware/authentication");
 const User = require("../models/user");
+const Cart = require("../models/cart");
+const CartItem = require("../models/cart_item");
 
 const router = express.Router();
 
@@ -16,12 +18,39 @@ router.get("/user", (req, res) => {
   User.findOne({ _id: token.id })
     .then((user) => {
       if (!user) {
-        res.status(404).send({ status: "failed", message: "user not found" });
+        return res
+          .status(404)
+          .send({ status: "failed", message: "user not found" });
       }
 
-      res
-        .status(200)
-        .send({ status: "successful", message: "found user", data: user });
+      Cart.findOne({ user_id: user._id, ordered: false }).then((cart) => {
+        if (!cart) {
+          return res
+            .status(200)
+            .send({
+              status: "successful",
+              message: "found user",
+              data: user,
+              cart_items: [],
+            });
+        }
+
+        CartItem.find({ cart_id: cart._id }).then((cart_item) => {
+          return res
+            .status(200)
+            .send({
+              status: "successful",
+              message: "found user",
+              data: user,
+              cart_items: cart_item,
+            });
+        });
+        // return res.send(cart);
+      });
+
+      // return res
+      //   .status(200)
+      //   .send({ status: 'successful', message: 'found user', data: user });
     })
     .catch((error) => {
       throw error;
@@ -86,7 +115,6 @@ router.post("/create_user", (req, res) => {
           state,
           address,
           phone,
-          email,
           is_admin,
           password: hashPassword,
         }).then((user) => {
@@ -98,6 +126,7 @@ router.post("/create_user", (req, res) => {
             const token = jwt.sign(
               {
                 id: user._id,
+                user_type: user.user_type,
                 is_admin: user.is_admin,
               },
               process.env.JWT_SECRET,

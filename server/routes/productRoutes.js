@@ -1,16 +1,18 @@
-const express = require("express");
-const multer = require("multer");
-const cloudinary = require("cloudinary");
-const cloudinaryStorage = require("multer-storage-cloudinary");
-require("dotenv").config();
+const express = require('express');
+const multer = require('multer');
+const cloudinary = require('cloudinary');
+const cloudinaryStorage = require('multer-storage-cloudinary');
+const Validator = require('validator');
+require('dotenv').config();
 
-const authenticate = require("../middleware/authentication");
-const helper = require("../middleware/helper");
+const authenticate = require('../middleware/authentication');
+const helper = require('../middleware/helper');
 
-const Product = require("../models/product");
-const Order = require("../models/order");
-const Cart = require("../models/cart");
-const User = require("../models/user");
+const Product = require('../models/product');
+const Order = require('../models/order');
+const Cart = require('../models/cart');
+const CartItem = require('../models/cart_item');
+const User = require('../models/user');
 
 //cloudinary config
 cloudinary.config({
@@ -75,25 +77,63 @@ router.post(
   authenticate.checkTokenValid,
   (req, res) => {
     const token = helper(req);
+    // console.log(token)
     User.findOne({ _id: token.id })
       .then((user) => {
-        Product.findOne({ _id: req.params.id }).then((product) => {
-          let cart = new Cart({
-            user_id: token.id,
-            product: product,
-          });
-          user.cart.push(cart);
-          cart.save((error) => {
-            if (error) return res.send(error);
-          });
-          user.save((error) => {
-            if (error) return res.send(error);
-          });
-          product.picked.push(token.id);
-          product.save((error, p) => {
-            if (error) return res.send(error);
+        Product.findOne({ _id: req.params.id }).then(async (product) => {
+          if (!product) {
+            return res.send("Product does not exist");
+          }
 
-            res.status(201).send(p);
+          Cart.findOne({ user_id: user._id, ordered: false }).then((cart) => {
+            // console.log(cart)
+            // return res.send(cart)
+            if (!cart) {
+              let new_cart = new Cart({
+                user_id: user._id,
+              });
+
+              new_cart.save((error) => {
+                if (error) return res.send(error);
+              });
+
+              let cart_item = new CartItem({
+                cart_id: new_cart._id,
+                product: product._id,
+              });
+
+              cart_item.save((error) => {
+                if (error) return res.send(error);
+              });
+
+              return res.send({
+                message: "Prduct has been added successfully",
+                new_cart_item: cart_item,
+                cart: new_cart,
+              });
+            }
+
+            CartItem.findOne({ cart_id: cart._id, product: product._id }).then(
+              (cart_item) => {
+                if (cart_item) {
+                  return res.send({
+                    message: "Product has been added already",
+                    new_cart_item: cart_item,
+                    cart,
+                  });
+                }
+
+                let new_cart_item = new CartItem({
+                  cart_id: cart._id,
+                  product: product._id,
+                });
+
+                new_cart_item.save((error) => {
+                  if (error) return res.send(error);
+                });
+                return res.send({ new_cart_item, cart, product });
+              }
+            );
           });
         });
       })
@@ -110,12 +150,40 @@ router.get(
   authenticate.checkTokenValid,
   (req, res) => {
     const token = helper(req);
-    Cart.find({ user_id: token.id, ordered: false }).then((cart) => {
-      if (cart.length < 1) {
-        res.status(200).send({ message: "Nothing in cart yet" });
+    Cart.findOne({ user_id: token.id, ordered: false }).then((cart) => {
+      if (!cart) {
+        // return res.status(400).send('nothing')
+        return res.status(200).send({ message: "Nothing in cart yet" });
       }
 
-      res.status(200).send(cart);
+      CartItem.find({ cart_id: cart._id }).then(async (cart_items) => {
+        if (cart_items.length < 1) {
+          return res.status(200).send({ message: "Nothing in cart yet" });
+        }
+
+        let cart_products = [];
+
+        for (let i = 0; i < cart_items.length; i++) {
+          const item = cart_items[i];
+
+          const product = await Product.findOne({ _id: item.product });
+
+          if (product) {
+            let data = {
+              id: product._id,
+              quantity: item.quantity,
+              image: product.image,
+              name: product.product_name,
+              price: product.price,
+              cost: product.price * item.quantity,
+            };
+
+            cart_products.push(data);
+          }
+        }
+
+        return res.status(200).send({ data: cart_products, cart });
+      });
     });
   }
 );
@@ -174,6 +242,39 @@ router.get(
         res.status(200).send({ message: "No orders yet" });
       }
       res.status(200).send({ success: true, data: orders });
+    });
+  }
+);
+
+router.get(
+  "/adjust_product/:id",
+  authenticate.checkTokenExists,
+  authenticate.checkTokenValid,
+  (req, res) => {
+    const token = helper(req);
+    const { id } = req.params;
+    const { type } = req.query;
+
+    Cart.findOne({ user_id: token.id, ordered: false }).then((cart) => {
+      if (!cart) {
+        return res.status(200).send({ message: "Cart does not exist" });
+      }
+
+      CartItem.findOne({ cart_id: cart._id, product: id }).then((item) => {
+        if (!item) {
+          return res
+            .status(200)
+            .send({ message: "Item does not exist in the cart" });
+        }
+
+        if (type == "increment") item.quantity += 1;
+        else item.quantity -= 1;
+
+        item.save((error) => {
+          if (error) return res.send(error);
+        });
+        return res.status(200).send({ message: "Successful" });
+      });
     });
   }
 );

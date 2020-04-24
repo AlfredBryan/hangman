@@ -3,6 +3,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const productSchema = new Schema({
+  posted_by: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   product_name: {
     type: String,
     required: [true, "product name is required"],
@@ -19,20 +23,10 @@ const productSchema = new Schema({
     type: String,
     required: [true, "price field is required"],
   },
-  count: {
-    type: Number,
-    default: 0,
-  },
   total: {
     type: Number,
     default: 0,
   },
-  picked: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
   date_added: {
     type: Date,
     default: Date.now(),

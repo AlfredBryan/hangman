@@ -10,11 +10,6 @@ const cartSchema = new Schema({
     type: Boolean,
     default: false
   },
-  product: [
-    {
-      type: Schema.Types.Array
-    }
-  ]
 });
 
 const Cart = mongoose.model("Cart", cartSchema);
