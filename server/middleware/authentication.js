@@ -11,7 +11,6 @@ class authenticate {
    */
   static checkTokenExists(req, res, next) {
     const { token } = req.headers;
-
     if (token === undefined || token === null || token === "") {
       res
         .status(422)

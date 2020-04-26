@@ -22,24 +22,24 @@ cloudinary.config({
 });
 const storage = cloudinaryStorage({
   cloudinary: cloudinary,
-  folder: "posts",
-  allowedFormats: ["jpg", "png"],
-  transformation: [{ width: 500, height: 500, crop: "limit" }],
+  folder: 'posts',
+  allowedFormats: ['jpg', 'png'],
+  transformation: [{ width: 500, height: 500, crop: 'limit' }],
 });
 
-const parser = multer({ storage: storage }).single("image");
+const parser = multer({ storage: storage }).single('image');
 
 const router = express.Router();
 
-router.get("/products", (req, res) => {
+router.get('/products', (req, res) => {
   Product.find({})
     .then((product) => {
       if (product.length < 1) {
         res
           .status(404)
-          .send({ status: "failed", message: "no products found" });
+          .send({ status: 'failed', message: 'no products found' });
       } else {
-        res.status(200).send({ status: "successful", data: product });
+        res.status(200).send({ status: 'successful', data: product });
       }
     })
     .catch((error) => {
@@ -48,7 +48,7 @@ router.get("/products", (req, res) => {
 });
 
 // Admin can add new products on platform
-router.post("/add_product", parser, (req, res) => {
+router.post('/add_product', parser, (req, res) => {
   const { product_name, description, price } = req.body;
   Product.create({
     product_name,
@@ -60,9 +60,9 @@ router.post("/add_product", parser, (req, res) => {
       if (!product) {
         res
           .status(500)
-          .send({ status: "failed", message: "error adding product" });
+          .send({ status: 'failed', message: 'error adding product' });
       } else {
-        res.status(201).send({ status: "successful", data: product });
+        res.status(201).send({ status: 'successful', data: product });
       }
     })
     .catch((error) => {
@@ -72,7 +72,7 @@ router.post("/add_product", parser, (req, res) => {
 
 // User can add a product to cart
 router.post(
-  "/product_select/:id",
+  '/product_select/:id',
   authenticate.checkTokenExists,
   authenticate.checkTokenValid,
   (req, res) => {
@@ -82,7 +82,7 @@ router.post(
       .then((user) => {
         Product.findOne({ _id: req.params.id }).then(async (product) => {
           if (!product) {
-            return res.send("Product does not exist");
+            return res.send('Product does not exist');
           }
 
           Cart.findOne({ user_id: user._id, ordered: false }).then((cart) => {
@@ -107,7 +107,7 @@ router.post(
               });
 
               return res.send({
-                message: "Prduct has been added successfully",
+                message: 'Prduct has been added successfully',
                 new_cart_item: cart_item,
                 cart: new_cart,
               });
@@ -117,7 +117,7 @@ router.post(
               (cart_item) => {
                 if (cart_item) {
                   return res.send({
-                    message: "Product has been added already",
+                    message: 'Product has been added already',
                     new_cart_item: cart_item,
                     cart,
                   });
@@ -145,7 +145,7 @@ router.post(
 
 //View Cart
 router.get(
-  "/cart",
+  '/cart',
   authenticate.checkTokenExists,
   authenticate.checkTokenValid,
   (req, res) => {
@@ -153,12 +153,12 @@ router.get(
     Cart.findOne({ user_id: token.id, ordered: false }).then((cart) => {
       if (!cart) {
         // return res.status(400).send('nothing')
-        return res.status(200).send({ message: "Nothing in cart yet" });
+        return res.status(200).send({ message: 'Nothing in cart yet' });
       }
 
       CartItem.find({ cart_id: cart._id }).then(async (cart_items) => {
         if (cart_items.length < 1) {
-          return res.status(200).send({ message: "Nothing in cart yet" });
+          return res.status(200).send({ message: 'Nothing in cart yet' });
         }
 
         let cart_products = [];
@@ -190,7 +190,7 @@ router.get(
 
 // View user by user Id
 router.get(
-  "/view_user/:id",
+  '/view_user/:id',
   authenticate.checkTokenExists,
   authenticate.checkTokenValid,
   authenticate.checkAdmin,
@@ -198,9 +198,9 @@ router.get(
     User.findOne({ _id: req.params.id })
       .then((user) => {
         if (!user) {
-          res.status(404).send({ message: "user not found" });
+          res.status(404).send({ message: 'user not found' });
         }
-        res.status(200).send({ status: "successful", data: user });
+        res.status(200).send({ status: 'successful', data: user });
       })
       .catch((error) => {
         res.status(500).send(error);
@@ -210,7 +210,7 @@ router.get(
 
 //user can order a design
 router.post(
-  "/order",
+  '/order',
   authenticate.checkTokenExists,
   authenticate.checkTokenValid,
   (req, res) => {
@@ -233,13 +233,13 @@ router.post(
 
 //Fetch Orders
 router.get(
-  "/user_order",
+  '/user_order',
   authenticate.checkTokenExists,
   authenticate.checkTokenValid,
   (req, res) => {
     Order.find({}).then((orders) => {
       if (orders.length < 1) {
-        res.status(200).send({ message: "No orders yet" });
+        res.status(200).send({ message: 'No orders yet' });
       }
       res.status(200).send({ success: true, data: orders });
     });
@@ -247,7 +247,7 @@ router.get(
 );
 
 router.get(
-  "/adjust_product/:id",
+  '/adjust_product/:id',
   authenticate.checkTokenExists,
   authenticate.checkTokenValid,
   (req, res) => {
@@ -257,25 +257,51 @@ router.get(
 
     Cart.findOne({ user_id: token.id, ordered: false }).then((cart) => {
       if (!cart) {
-        return res.status(200).send({ message: "Cart does not exist" });
+        return res.status(200).send({ message: 'Cart does not exist' });
       }
 
       CartItem.findOne({ cart_id: cart._id, product: id }).then((item) => {
         if (!item) {
           return res
             .status(200)
-            .send({ message: "Item does not exist in the cart" });
+            .send({ message: 'Item does not exist in the cart' });
         }
 
-        if (type == "increment") item.quantity += 1;
+        if (type == 'increment') item.quantity += 1;
         else item.quantity -= 1;
 
         item.save((error) => {
           if (error) return res.send(error);
         });
-        return res.status(200).send({ message: "Successful" });
+        return res.status(200).send({ message: 'Successful' });
       });
     });
+  }
+);
+
+router.get(
+  '/cart/delete/:id',
+  authenticate.checkTokenExists,
+  authenticate.checkTokenValid,
+  (req, res) => {
+    const { id } = req.params;
+    const { product } = req.query;
+    const token = helper(req);
+    Cart.findOne({ user_id: token.id, ordered: false, _id: id }).then(
+      (cart) => {
+        if (!cart) {
+          res.status(200).send({ message: 'Item does not exist in the cart' });
+        }
+
+        CartItem.findOne({ product, cart_id: cart._id }).then((item) => {
+          if (item) {
+            item.delete();
+          }
+        });
+
+        res.status(200).send('Successful');
+      }
+    );
   }
 );
 
