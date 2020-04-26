@@ -1,18 +1,18 @@
-const express = require('express');
-const multer = require('multer');
-const cloudinary = require('cloudinary');
-const cloudinaryStorage = require('multer-storage-cloudinary');
-const Validator = require('validator');
-require('dotenv').config();
+const express = require("express");
+const multer = require("multer");
+const cloudinary = require("cloudinary");
+const cloudinaryStorage = require("multer-storage-cloudinary");
+const Validator = require("validator");
+require("dotenv").config();
 
-const authenticate = require('../middleware/authentication');
-const helper = require('../middleware/helper');
+const authenticate = require("../middleware/authentication");
+const helper = require("../middleware/helper");
 
-const Product = require('../models/product');
-const Order = require('../models/order');
-const Cart = require('../models/cart');
-const CartItem = require('../models/cart_item');
-const User = require('../models/user');
+const Product = require("../models/product");
+const Order = require("../models/order");
+const Cart = require("../models/cart");
+const CartItem = require("../models/cart_item");
+const User = require("../models/user");
 
 //cloudinary config
 cloudinary.config({
@@ -232,19 +232,14 @@ router.post(
 );
 
 //Fetch Orders
-router.get(
-  "/user_order",
-  authenticate.checkTokenExists,
-  authenticate.checkTokenValid,
-  (req, res) => {
-    Order.find({}).then((orders) => {
-      if (orders.length < 1) {
-        res.status(200).send({ message: "No orders yet" });
-      }
-      res.status(200).send({ success: true, data: orders });
-    });
-  }
-);
+router.get("/user_order", (req, res) => {
+  Order.find({}).then((orders) => {
+    if (orders.length < 1) {
+      res.status(200).send({ message: "No orders yet" });
+    }
+    res.status(200).send({ success: true, data: orders });
+  });
+});
 
 router.get(
   "/adjust_product/:id",
